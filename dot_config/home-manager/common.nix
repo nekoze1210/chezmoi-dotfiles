@@ -100,9 +100,6 @@
       # docker
       dc = "docker compose";
       de = "docker compose exec";
-      # arch
-      a86 = "arch -x86_64";
-      am1 = "arch -arm64e";
       # gcp / firebase
       gab = "gcloud app browse";
       gpl = "gcloud projects list";
@@ -177,12 +174,22 @@
     '';
   };
 
-  # git サブコマンドの省略形（user.name/email は flake.nix の homeUser 側）
-  programs.git.settings.alias = {
-    co = "checkout";
-    chk = "checkout";
-    cdev = "checkout -b develop origin/develop";
-    grh = "reset HEAD";
+  # git 設定（旧 ~/.dotfiles/.gitconfig から移植。user.name/email は flake.nix の homeUser）。
+  programs.git.settings = {
+    alias = {
+      co = "checkout";
+      chk = "checkout";
+      cdev = "checkout -b develop origin/develop";
+      grh = "reset HEAD";
+    };
+    init.defaultBranch = "main";
+    push.autoSetupRemote = true;
+    # SSH 鍵でコミット署名（name/email は homeUser 側）
+    commit.gpgsign = true;
+    gpg.format = "ssh";
+    user.signingKey = "~/.ssh/id_github.pub";
+    # https の GitHub を ssh に書き換え
+    url."git@github.com:".insteadOf = "https://github.com/";
   };
 
   # プロンプト（mizchi の設定: git_status を絵文字化）
