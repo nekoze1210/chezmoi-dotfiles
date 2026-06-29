@@ -6,6 +6,11 @@ package-lock.json
 # Repo docs for Claude Code — must not be deployed to ~ by chezmoi.
 CLAUDE.md
 
+# Top-level flake.nix is the repo's own dev flake (nixfmt formatter + devShell).
+# Keep it in the repo for `nix fmt`, but do NOT deploy it to ~/flake.nix.
+# 先頭スラッシュで repo root にアンカー（~/.config/home-manager/flake.nix は影響を受けない）。
+/flake.nix
+
 # MoonBit build artifacts (inside skill assets/)
 **/_build
 **/target

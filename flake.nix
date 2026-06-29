@@ -1,5 +1,5 @@
 {
-  description = "A minimal flake template that you can adapt to your own project";
+  description = "Dev flake for this dotfiles repo (nixfmt formatter + devShell)";
 
   inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
 
