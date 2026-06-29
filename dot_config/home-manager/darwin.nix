@@ -7,11 +7,16 @@
   # 単一ユーザ環境。homebrew や user-scoped activation はこの user を見る。
   system.primaryUser = private.username;
 
-  # username（daikinagaoka）と home（/Users/nekoze）は一致しないので明示する。
-  # ここを /Users/${username} 等で導出すると壊れる。
+  # ホームは通常 username から導出する (/Users/<username>)。ただし username と
+  # ホーム名が食い違う環境（今の機体: user=daikinagaoka / home=/Users/nekoze）の
+  # ときだけ private.homeDirectory（= chezmoi の .chezmoi.homeDir）へフォールバック。
   users.users.${private.username} = {
     name = private.username;
-    home = private.homeDirectory;
+    home =
+      let
+        derived = "/Users/${private.username}";
+      in
+      if (private.homeDirectory or derived) == derived then derived else private.homeDirectory;
   };
 
   nixpkgs.hostPlatform = "aarch64-darwin";
