@@ -111,11 +111,13 @@
   };
 
   # --------------------------------------------------------------------------
-  # 以下は mizchi が入れている macOS デフォルト / Touch ID sudo。デスクトップの
-  # 挙動が変わるので、欲しくなったらコメントアウトを外して darwin-rebuild switch。
+  # Touch ID で sudo を通す → darwin-rebuild switch 等の毎回のパスワードが指紋に。
+  # /etc/pam.d/sudo_local に書く方式なので macOS アップデートでも消えない。
   # --------------------------------------------------------------------------
-  # security.pam.services.sudo_local.touchIdAuth = true;
-  #
+  security.pam.services.sudo_local.touchIdAuth = true;
+
+  # macOS デフォルト（dock autohide 等）はデスクトップ挙動が変わるので任意。
+  # 欲しくなったらコメントを外して darwin-rebuild switch。
   # system.defaults = {
   #   NSGlobalDomain = {
   #     AppleShowAllExtensions = true;
