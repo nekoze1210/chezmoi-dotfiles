@@ -1,0 +1,16 @@
+{{- $githubUsername := promptStringOnce . "github_username" "GitHub username" "nekoze1210" -}}
+{{- $claudeMode := promptStringOnce . "claude_default_mode" "Claude default mode" "auto" -}}
+{{- $gitName := promptStringOnce . "git_name" "Git user.name" $githubUsername -}}
+{{- $gitEmail := promptStringOnce . "git_email" "Git user.email" "14988862+nekoze1210@users.noreply.github.com" -}}
+
+encryption = "age"
+
+[age]
+identity = "~/.config/age/key.txt"
+recipient = "age1pjeah6g0ukqehg5jerynpjpjalhca90zlvsx4n73ytpqryedfphqg2vd0s"
+
+[data]
+github_username = {{ $githubUsername | quote }}
+claude_default_mode = {{ $claudeMode | quote }}
+git_name = {{ $gitName | quote }}
+git_email = {{ $gitEmail | quote }}

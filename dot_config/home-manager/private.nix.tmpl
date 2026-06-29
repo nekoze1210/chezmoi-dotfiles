@@ -1,0 +1,12 @@
+# chezmoi がこのテンプレートから ~/.config/home-manager/private.nix を生成する。
+# リポジトリにはこの .tmpl だけが入り、実際の値（特に email）はコミットされない。
+# 値の出どころ:
+#   username/homeDirectory … マシンから自動（.chezmoi.username / .chezmoi.homeDir）
+#   gitName/email          … `chezmoi init` のプロンプト → ~/.config/chezmoi/chezmoi.toml
+# flake.nix がこのファイルを import して home.username / git 設定に注入する。
+{
+  username = {{ .chezmoi.username | quote }};
+  homeDirectory = {{ .chezmoi.homeDir | quote }};
+  gitName = {{ .git_name | quote }};
+  email = {{ .git_email | quote }};
+}

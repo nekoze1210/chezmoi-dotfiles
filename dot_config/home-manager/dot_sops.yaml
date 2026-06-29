@@ -1,0 +1,7 @@
+keys:
+  - &nekoze age1pansh2uhu8ec468669a7jyn4nahhzuxqqtd3aqrq7jchng5tnursmedxza
+creation_rules:
+  - path_regex: secrets/.*\.(ya?ml|json)$
+    key_groups:
+      - age:
+          - *nekoze

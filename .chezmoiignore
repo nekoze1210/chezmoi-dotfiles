@@ -1,0 +1,44 @@
+node_modules
+**/node_modules
+package-lock.json
+**/.DS_Store
+
+# Repo docs for Claude Code — must not be deployed to ~ by chezmoi.
+CLAUDE.md
+
+# MoonBit build artifacts (inside skill assets/)
+**/_build
+**/target
+**/.mooncakes
+
+# Security-sensitive skills kept out of public dotfiles.
+# npm-release contains GitHub App IDs, release automation details,
+# and distribution scripts that are useful for attackers targeting the
+# release pipeline. Keep it local-only.
+
+# .claude/skills/npm-release/**
+
+# chloe-chat is a personal persona skill (lives at ~/ghq/github.com/mizchi/skills/chloe-chat,
+# excluded from that public repo via its .gitignore). The ~/.claude/skills/chloe-chat/SKILL.md
+# is just a symlink to the source. Keep chezmoi off it.
+
+# .claude/skills/chloe-chat/**
+
+# Skills migrated to mizchi/skills (APM-managed). chezmoi must not
+# re-deploy these; apm install -g handles the lifecycle.
+
+# .claude/skills/apm-usage/**
+
+
+# age private identity (NEVER commit). Defensive guard against an
+# accidental `chezmoi add ~/.config/age/`; the key file lives only on
+# the local machine and must be backed up out-of-band (1Password etc.).
+.config/age/**
+
+# Nix dev-shell + build artifacts under home-manager dir.
+.config/home-manager/.direnv/**
+.config/home-manager/result
+.config/home-manager/result-*
+
+# 注: ~/.config/home-manager/private.nix は private.nix.tmpl から chezmoi が
+# 生成する（identity 注入用）。生成ターゲットなので ignore しないこと。
