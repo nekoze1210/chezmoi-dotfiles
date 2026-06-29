@@ -7,9 +7,10 @@ package-lock.json
 CLAUDE.md
 
 # Top-level flake.nix is the repo's own dev flake (nixfmt formatter + devShell).
-# Keep it in the repo for `nix fmt`, but do NOT deploy it to ~/flake.nix.
-# 先頭スラッシュで repo root にアンカー（~/.config/home-manager/flake.nix は影響を受けない）。
+# Keep it (and its lock) in the repo for `nix fmt`, but do NOT deploy them to ~.
+# 先頭スラッシュで repo root にアンカー（~/.config/home-manager/flake.{nix,lock} は影響を受けない）。
 /flake.nix
+/flake.lock
 
 # MoonBit build artifacts (inside skill assets/)
 **/_build

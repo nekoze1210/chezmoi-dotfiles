@@ -4,41 +4,22 @@
   inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
 
   outputs =
-    { self, ... }@inputs:
+    { nixpkgs, ... }:
     let
-      inherit (inputs.nixpkgs) lib;
-
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-
-      forEachSupportedSystem =
-        f:
-        lib.genAttrs supportedSystems (
-          system:
-          f {
-            inherit system;
-            pkgs = import inputs.nixpkgs {
-              inherit system;
-              config.allowUnfree = true;
-            };
-          }
-        );
+      # Apple Silicon (M1) Mac 専用。他プラットフォームに出す予定はないので
+      # multi-system の足場は持たず aarch64-darwin 決め打ち（mizchi 同様）。
+      system = "aarch64-darwin";
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
     in
     {
-      devShells = forEachSupportedSystem (
-        { pkgs, system }:
-        {
-          default = pkgs.mkShellNoCC {
-            packages = with pkgs; [
-              self.formatter.${system}
-            ];
-          };
-        }
-      );
+      devShells.${system}.default = pkgs.mkShellNoCC {
+        packages = [ pkgs.nixfmt ];
+      };
 
-      formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt);
+      # `nix fmt` 用フォーマッタ
+      formatter.${system} = pkgs.nixfmt;
     };
 }
