@@ -48,15 +48,16 @@
       upgrade = false;
     };
 
-    # ant cask が参照する anthropics/tap のみ。他の13 taps は ⑤ の cleanup で
-    # formula を全て nixpkgs へ移行/撤去したため未使用 → 宣言から外した
-    # （cleanup="uninstall" なので次の switch で untap される）。必要時に再追加。
+    # 使うものだけ: anthropics/tap（ant cask）と microsoft/apm（apm formula）。
+    # 他の taps は ⑤ cleanup で formula を nixpkgs 移行/撤去したため未宣言＝untap。
     taps = [
       "anthropics/tap"
+      "microsoft/apm"
     ];
 
     brews = [
       "mas" # masApps を入れるのに必要
+      "microsoft/apm/apm" # APM（このツールだけ brew 継続）
     ];
 
     casks = [
