@@ -12,7 +12,7 @@ Three layers, three jobs:
 - **nix-darwin** (`darwinConfigurations."daikinagaoka"`) — manages macOS system settings and Homebrew (casks/mas/taps) declaratively. Run `sudo darwin-rebuild switch` after editing `darwin.nix`.
 
 Nix files (mizchi-style layout, under `dot_config/home-manager/`):
-- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (incl. a `mise` `doCheck=false` fix). `homeUser` is the shared home-manager module.
+- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (incl. a `mise` `doCheck=false` fix). `homeUser` is the shared home-manager module. Also a `formatter` output (nixfmt) so `nix fmt` works here.
 - `common.nix` — the home-manager module: `home.packages` (CLI from nixpkgs) + shell stack (`programs.zsh`/starship/atuin/zoxide/carapace/sheldon/mise/direnv/fzf) + PATH/env/aliases.
 - `darwin.nix` — nix-darwin system module: boilerplate (`nix.enable=false` for Determinate) + the `homebrew` block.
 - `secrets.nix` — sops-nix declarations (see Secrets below).
@@ -25,7 +25,6 @@ Never edit the deployed copies under `~/.config/...` directly — the next `chez
 
 chezmoi mangles source filenames into target paths under `~`:
 - `dot_config/` → `~/.config/` (the `dot_` prefix becomes a leading `.`)
-- top-level `flake.nix` → `~/flake.nix`
 - `.chezmoi*` files are chezmoi's own config and are never deployed
 - an `encrypted_` prefix or `.age` suffix marks age-encrypted source files
 
@@ -54,7 +53,7 @@ sudo darwin-rebuild switch --flake ~/.config/home-manager#daikinagaoka
 
 nix flake update     # bump inputs; GitHub 403 on sops-nix? prefix NIX_CONFIG="access-tokens = github.com=$(gh auth token)"
 nix flake check
-nix fmt              # nixfmt (declared in the top-level flake.nix)
+nix fmt              # nixfmt formatter output (run from ~/.config/home-manager)
 ```
 First-time nix-darwin bootstrap (before `darwin-rebuild` is on PATH):
 ```
@@ -81,7 +80,7 @@ This repo uses **two independent age-based encryption systems**. Don't conflate 
 - `git_name` (default = `github_username`)
 - `git_email` (default = GitHub noreply)
 
-`git_name`/`git_email` (plus the machine's `.chezmoi.username` / `.chezmoi.homeDir`) are rendered by `private.nix.tmpl` into `~/.config/home-manager/private.nix`, which `flake.nix` imports to set `home.username`, `home.homeDirectory`, and `programs.git`. The real email therefore lives only in `~/.config/chezmoi/chezmoi.toml`, never in the committed repo. Note: OS username is `daikinagaoka` but `$HOME` is `/Users/nekoze` — they differ, so home is never derived from the username.
+`git_name`/`git_email` (plus the machine's `.chezmoi.username` / `.chezmoi.homeDir`) are rendered by `private.nix.tmpl` into `~/.config/home-manager/private.nix`, which `flake.nix` imports to set `home.username`, `home.homeDirectory`, and `programs.git`. The real email therefore lives only in `~/.config/chezmoi/chezmoi.toml`, never in the committed repo. Note: OS username is `daikinagaoka` but `$HOME` is `/Users/nekoze` — they differ, so home-manager takes `home.homeDirectory` from `private.homeDirectory` directly, and `darwin.nix` uses `/Users/<username>` as the standard with a fallback to `private.homeDirectory` when they differ.
 
 ## Current state / gotchas
 

@@ -100,5 +100,8 @@
         ];
         specialArgs = { inherit private; };
       };
+
+      # `nix fmt` 用フォーマッタ（nix ファイルはこのディレクトリ配下にしか無い）。
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }
