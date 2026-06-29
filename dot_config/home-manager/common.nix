@@ -67,6 +67,7 @@
     KCODE = "u";
     CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense";
     DIRENV_LOG_FORMAT = "";
+    _ZO_DOCTOR = "0"; # zoxide の初期化順 doctor 警告を抑制（mizchi 同様）
     PNPM_HOME = "${config.home.homeDirectory}/Library/pnpm";
     BUN_INSTALL = "${config.home.homeDirectory}/.bun";
   };

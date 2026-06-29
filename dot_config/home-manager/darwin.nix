@@ -48,21 +48,11 @@
       upgrade = false;
     };
 
+    # ant cask が参照する anthropics/tap のみ。他の13 taps は ⑤ の cleanup で
+    # formula を全て nixpkgs へ移行/撤去したため未使用 → 宣言から外した
+    # （cleanup="uninstall" なので次の switch で untap される）。必要時に再追加。
     taps = [
       "anthropics/tap"
-      "aws/tap"
-      "bufbuild/buf"
-      "grishka/grishka"
-      "hashicorp/tap"
-      "libsql/sqld"
-      "microsoft/apm"
-      "olets/tap"
-      "openclaw/tap"
-      "oven-sh/bun"
-      "phayes/repo"
-      "steipete/tap"
-      "stripe/stripe-cli"
-      "tursodatabase/tap"
     ];
 
     brews = [
