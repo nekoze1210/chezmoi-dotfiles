@@ -21,40 +21,36 @@ Design notes:
 # 0. Determinate Nix (flakes enabled by default). Open a new shell afterwards.
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 1. Homebrew — nix-darwin's homebrew module manages casks/mas but does NOT
-#    install brew itself, so it must exist first.
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# 2. Restore the SSH ed25519 key to ~/.ssh/id_github.
+# 1. Restore the SSH ed25519 key to ~/.ssh/id_github.
 #    It is BOTH the sops-nix decryption identity (via ssh-to-age) and the git
-#    signing key, so home-manager activation in step 5 needs it present.
+#    signing key, so home-manager activation in step 4 needs it present.
 #    (Restore the *same* key out-of-band; or generate a new one and add its
 #    recipient to dot_sops.yaml + `sops updatekeys` — see SECRETS.md.)
 chmod 600 ~/.ssh/id_github
 
-# 3. chezmoi (curl-installed to ~/.local/bin).
+# 2. chezmoi (curl-installed to ~/.local/bin).
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin
 export PATH="$HOME/.local/bin:$PATH"
 
-# 4. Clone + deploy. Prompts for github_username / claude_default_mode /
-#    git_name / git_email, renders ~/.config/home-manager/private.nix, and
-#    lays down ~/.config/home-manager/* and the rest of the dotfiles.
+# 3. Clone + deploy. Prompts for github_username / claude_default_mode /
+#    git_name / git_email and renders ~/.config/home-manager/private.nix.
+#    run_once_before_install-brew.sh auto-installs Homebrew here (nix-darwin's
+#    homebrew module needs it present); on a fresh Mac it prompts for sudo once.
 chezmoi init --apply nekoze1210/chezmoi-dotfiles
 
-# 5. home-manager (first activation — darwin-rebuild/home-manager not on PATH yet).
+# 4. home-manager (first activation — home-manager not on PATH yet).
 #    Installs CLI + shell stack + `op`, and sops-nix decrypts secrets using
 #    ~/.ssh/id_github. Open a new terminal afterwards.
 nix run github:nix-community/home-manager -- switch -b backup --flake ~/.config/home-manager#macos
 
-# 6. nix-darwin (first activation / bootstrap — darwin-rebuild not on PATH yet).
+# 5. nix-darwin (first activation / bootstrap — darwin-rebuild not on PATH yet).
 #    Installs casks/mas/taps, macOS defaults, and Touch-ID-for-sudo.
 #    This first run asks for your password; sudo becomes Touch ID afterwards.
 cd ~/.config/home-manager
 nix build .#darwinConfigurations.macos.system
 sudo ./result/sw/bin/darwin-rebuild switch --flake .#macos
 
-# 7. (optional) chezmoi-age key — only needed once you encrypt files with
+# 6. (optional) chezmoi-age key — only needed once you encrypt files with
 #    `chezmoi add --encrypt`. Sign in to 1Password CLI (enable the app's
 #    "Integrate with 1Password CLI"), then re-apply: run_before_decrypt-age-key.sh
 #    restores ~/.config/age/key.txt from the `chezmoi-age-key` note.
