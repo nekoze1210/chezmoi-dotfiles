@@ -128,12 +128,10 @@
       share = true;
     };
 
-    # .zprofile 相当（login shell）。brew shellenv / orbstack / kiro。
+    # .zprofile 相当（login shell）。brew shellenv / orbstack。
     profileExtra = ''
-      [[ -f "''${HOME}/Library/Application Support/kiro-cli/shell/zprofile.pre.zsh" ]] && builtin source "''${HOME}/Library/Application Support/kiro-cli/shell/zprofile.pre.zsh"
       eval "$(/opt/homebrew/bin/brew shellenv)"
       source ~/.orbstack/shell/init.zsh 2>/dev/null || :
-      [[ -f "''${HOME}/Library/Application Support/kiro-cli/shell/zprofile.post.zsh" ]] && builtin source "''${HOME}/Library/Application Support/kiro-cli/shell/zprofile.post.zsh"
     '';
 
     # programs.* で表現できない手書き分だけ
@@ -148,10 +146,6 @@
       # 触らせていないので、ここで明示的に通す）。
       path=("$HOME/.nix-profile/bin" "/run/current-system/sw/bin" $path)
       typeset -U path
-
-      # Kiro CLI (zshrc pre)
-      [[ -f "''${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "''${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
-      [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
       # gcloud SDK
       if [ -d "$HOME/google-cloud-sdk" ]; then
@@ -169,9 +163,6 @@
       ${lib.concatMapStringsSep "\n      " (
         name: ''[[ -r "${config.sops.secrets.${name}.path}" ]] && export ${name}="$(<"${config.sops.secrets.${name}.path}")"''
       ) (builtins.attrNames config.sops.secrets)}
-
-      # Kiro CLI (zshrc post)
-      [[ -f "''${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "''${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
     '';
   };
 
@@ -250,6 +241,11 @@
       plugins = {
         zsh-autosuggestions.github = "zsh-users/zsh-autosuggestions";
         fast-syntax-highlighting.github = "zdharma-continuum/fast-syntax-highlighting";
+        # kiro-cli(旧 Fig)の autocomplete 代替。TAB で fzf の候補ポップアップ。
+        # 注: home-manager は plugins をアルファベット順に出力するため実際の読込順は
+        # fast-syntax-highlighting → fzf-tab → ni → zsh-autosuggestions。fzf-tab が
+        # widget を wrap する zsh-autosuggestions より前に来るので問題なし。
+        fzf-tab.github = "Aloxaf/fzf-tab";
         ni.github = "azu/ni.zsh";
       };
     };
