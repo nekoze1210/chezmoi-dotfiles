@@ -59,7 +59,7 @@ sops secrets/global.json          # opens decrypted in $EDITOR; save re-encrypts
 # if adding a NEW name, also declare it in secrets.nix:
 #   sops.secrets.NEW_NAME = { };
 chezmoi apply -v
-cd ~/.config/home-manager && home-manager switch --flake .#daikinagaoka
+cd ~/.config/home-manager && home-manager switch --flake .#macos
 ```
 
 The export loop in `secrets.nix` is generated from `config.sops.secrets`, so a new
@@ -80,7 +80,7 @@ ssh-to-age -i ~/.ssh/id_xxx.pub             # -> age1... public key
 # already holds a key, re-encrypt to all recipients:
 sops --config ~/.config/home-manager/.sops.yaml updatekeys secrets/global.json
 # commit + push, then on the new machine:
-chezmoi apply && home-manager switch --flake ~/.config/home-manager#daikinagaoka
+chezmoi apply && home-manager switch --flake ~/.config/home-manager#macos
 ```
 
 To revoke a lost machine: drop its recipient from `dot_sops.yaml`, run

@@ -21,12 +21,17 @@ Design notes:
 # 0. Determinate Nix (flakes enabled by default). Open a new shell afterwards.
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 1. Restore the SSH ed25519 key to ~/.ssh/id_github.
+# 1. Generate the SSH ed25519 key at ~/.ssh/id_github.
 #    It is BOTH the sops-nix decryption identity (via ssh-to-age) and the git
-#    signing key, so home-manager activation in step 4 needs it present.
-#    (Restore the *same* key out-of-band; or generate a new one and add its
-#    recipient to dot_sops.yaml + `sops updatekeys` — see SECRETS.md.)
-chmod 600 ~/.ssh/id_github
+#    signing key, so home-manager activation (step 4) needs it present.
+#    ssh-keygen writes it 0600 — git signing rejects looser perms (sops itself
+#    is perm-agnostic) — and `-N ""` keeps it passphrase-less, which sops-nix
+#    needs to decrypt non-interactively at activation.
+#    NOTE: a *new* key is not yet a sops recipient. Add its ssh-to-age pubkey to
+#    dot_sops.yaml and run `sops updatekeys` so secrets decrypt (see SECRETS.md),
+#    and register ~/.ssh/id_github.pub with GitHub.
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+ssh-keygen -t ed25519 -f ~/.ssh/id_github -N "" -C "nekoze"
 
 # 2. chezmoi (curl-installed to ~/.local/bin).
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin
