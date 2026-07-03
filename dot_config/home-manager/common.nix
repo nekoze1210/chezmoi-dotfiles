@@ -34,6 +34,9 @@
     neovim
     bat
     eza
+    ripgrep # grep → rg
+    fd # find → fd
+    dust # du → dust
     tig
     tree
     jq
@@ -96,6 +99,10 @@
       ls = "eza --icons -ahiluU --time-style=long-iso";
       ll = "eza --icons -l --git --time-style=long-iso";
       la = "eza --icons -ahiluU --git --time-style=long-iso";
+      # ripgrep / fd / dust
+      grep = "rg";
+      find = "fd";
+      du = "dust";
       # dir
       lab = "cd ~/Laboratory";
       # docker
@@ -159,6 +166,12 @@
       # sheldon（plugins は programs.sheldon で宣言）
       eval "$(sheldon source)"
 
+      # zoxide（cd を乗っ取り、frecency ジャンプ）。非対話シェルで init すると
+      # Claude Code が動かなくなる現象があるため対話シェルのみで init する。
+      if [[ $- == *i* ]]; then
+        eval "$(zoxide init zsh --cmd cd)"
+      fi
+
       # 層1 secret: sops-nix が復号した 0400 ファイルから export（値は nix store に焼かれない）
       ${lib.concatMapStringsSep "\n      " (
         name: ''[[ -r "${config.sops.secrets.${name}.path}" ]] && export ${name}="$(<"${config.sops.secrets.${name}.path}")"''
@@ -214,11 +227,13 @@
     flags = [ "--disable-up-arrow" ];
   };
 
-  # cd を zoxide が乗っ取り（frecency ジャンプ）
+  # cd を zoxide が乗っ取り（frecency ジャンプ）。
+  # enableZshIntegration は使わず initContent 側で手動 init（下記）。
+  # 理由: 非対話シェルで zoxide init すると Claude Code が動かなくなる現象があるため、
+  # 対話シェル（$- に i を含む）でのみ init するようガードする。
   programs.zoxide = {
     enable = true;
-    enableZshIntegration = true;
-    options = [ "--cmd" "cd" ];
+    enableZshIntegration = false;
   };
 
   # 補完強化
