@@ -88,3 +88,7 @@ The login shell is Apple's `/bin/zsh` (the macOS default — no `chsh` needed on
 - Editing tools that rewrite their own config (Karabiner UI, kiro-cli) will drift from the chezmoi/home-manager source — re-capture with `chezmoi re-add <path>` (or fold into the nix config) after such edits.
 
 See [`CLAUDE.md`](CLAUDE.md) for the full architecture/working notes and [`dot_config/home-manager/SECRETS.md`](dot_config/home-manager/SECRETS.md) for the secrets workflow.
+
+## Acknowledgements
+
+Inspired by [mizchi/chezmoi-dotfiles](https://github.com/mizchi/chezmoi-dotfiles).
