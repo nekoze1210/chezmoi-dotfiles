@@ -41,6 +41,7 @@
             homeDirectory = "/Users/nekoze";
             gitName = "nekoze";
             email = "14988862+nekoze1210@users.noreply.github.com";
+            githubUsername = "nekoze1210";
           };
 
       sharedOverlays = [
@@ -64,9 +65,12 @@
           home.homeDirectory = private.homeDirectory;
           programs.git = {
             enable = true;
-            settings.user = {
-              name = private.gitName;
-              email = private.email;
+            settings = {
+              user = {
+                name = private.gitName;
+                email = private.email;
+              };
+              ghq.user = private.githubUsername;
             };
           };
         };
