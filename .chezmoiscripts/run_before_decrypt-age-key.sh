@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # chezmoi の age 復号鍵 (~/.config/age/key.txt) を、無ければ 1Password から復元する。
 # - chezmoi apply の「ファイル展開前」フェーズで毎回走る（鍵があれば即 exit で安価）。
 # - 新マシンで op 未導入/未サインインでも apply を壊さない（静かに skip）。
