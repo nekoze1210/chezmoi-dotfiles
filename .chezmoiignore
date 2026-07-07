@@ -27,6 +27,16 @@ README.md
 # the local machine and must be backed up out-of-band (1Password etc.).
 .config/age/**
 
+# SSH keys (NEVER commit). ~/.ssh/config is managed (private_dot_ssh/),
+# but id_github etc. are restored out-of-band (1Password / old machine).
+# Defensive guard against an accidental `chezmoi add ~/.ssh/...`.
+.ssh/id_*
+.ssh/*_gpg*
+.ssh/google_compute*
+.ssh/known_hosts*
+.ssh/allowed_signers
+.ssh/agent/**
+
 # Nix dev-shell + build artifacts under home-manager dir.
 .config/home-manager/.direnv/**
 .config/home-manager/result
