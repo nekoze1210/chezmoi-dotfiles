@@ -256,12 +256,14 @@
     enable = true;
     enableZshIntegration = true;
     globalConfig = {
-      python = "3.12";
-      node = "24";
-      go = "latest";
-      pnpm = "latest";
-      bun = "latest";
-      uv = "latest";
+      tools = {
+        python = "3.12";
+        node = "24";
+        go = "latest";
+        pnpm = "latest";
+        bun = "latest";
+        uv = "latest";
+      };
     };
   };
 
