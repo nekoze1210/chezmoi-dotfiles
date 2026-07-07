@@ -35,7 +35,9 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_github -N "" -C "$(hostname -s)"
 #    b) make it a sops recipient. This half runs ON A MACHINE THAT STILL
 #       HOLDS A CURRENT RECIPIENT KEY (see SECRETS.md "New machine"): add the
 #       output of `ssh-to-age -i ~/.ssh/id_github.pub` to dot_sops.yaml, run
-#       `sops updatekeys secrets/global.json`, commit, push. If the push
+#       `sops --config dot_sops.yaml updatekeys secrets/global.json` in
+#       dot_config/home-manager/ of the chezmoi source, commit, push (exact
+#       commands: SECRETS.md "New machine"). If the push
 #       lands after step 3's clone, run `chezmoi update` here before step 5.
 #       No machine with a current key left = secrets/*.json is unrecoverable
 #       (the emergency fallback is copying a surviving key directly).

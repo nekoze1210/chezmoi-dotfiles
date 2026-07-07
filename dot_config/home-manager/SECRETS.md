@@ -89,8 +89,11 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_github -N "" -C "$(hostname -s)"
 ssh-to-age -i ~/.ssh/id_github.pub          # -> age1... public key
 
 # ON A MACHINE THAT ALREADY HOLDS A CURRENT KEY (e.g. the old Mac):
-# add that age1... to dot_sops.yaml `keys:`, then re-encrypt to all recipients:
-sops --config ~/.config/home-manager/.sops.yaml updatekeys secrets/global.json
+cd ~/.local/share/chezmoi/dot_config/home-manager
+# add that age1... to dot_sops.yaml `keys:`, then re-encrypt to all recipients
+# (point --config at the SOURCE dot_sops.yaml — the deployed ~/.config/.../
+# .sops.yaml lags behind until the next chezmoi apply):
+sops --config dot_sops.yaml updatekeys secrets/global.json
 # commit + push, then on the new machine:
 chezmoi update && home-manager switch --flake ~/.config/home-manager#macos
 ```
