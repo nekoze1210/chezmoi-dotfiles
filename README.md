@@ -53,25 +53,24 @@ chezmoi init --apply nekoze1210/chezmoi-dotfiles
 # 4. Determinate Nix (flakes enabled by default). Open a new shell afterwards.
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 5. home-manager (first activation — home-manager not on PATH yet, so build
-#    the activationPackage from the flake.lock-pinned input and run it; same
-#    reasoning as step 6, and HOME_MANAGER_BACKUP_EXT is the env-var form of
-#    `switch -b backup`). Installs CLI + shell stack + `op`; sops-nix decrypts
-#    secrets with ~/.ssh/id_github from step 1 ("no key could decrypt" means
-#    that key is missing or not the recipient). Open a new terminal afterwards
-#    — `home-manager` itself is then on PATH (programs.home-manager.enable).
-cd ~/.config/home-manager
-nix build .#homeConfigurations.macos.activationPackage
-HOME_MANAGER_BACKUP_EXT=backup ./result/activate
+# 5. home-manager (first activation — home-manager not on PATH yet). This is
+#    OUR flake's app (apps.* in flake.nix), so the runner and the config are
+#    both flake.lock-pinned — never `nix run home-manager/master`, which pulls
+#    an unpinned runner from master. Clobbered files are backed up (`switch -b
+#    backup` equivalent is baked in). Installs CLI + shell stack + `op`;
+#    sops-nix decrypts secrets with ~/.ssh/id_github from step 1 ("no key
+#    could decrypt" means that key is missing or not the recipient). Open a
+#    new terminal afterwards — `home-manager` itself is then on PATH
+#    (programs.home-manager.enable).
+nix run ~/.config/home-manager#bootstrap-home
 
 # 6. Sign in to the App Store via the GUI FIRST (mas cannot sign in from the
 #    CLI; if it fails anyway, sign in and re-run — it's idempotent. Xcode alone
-#    is ~12GB). Then nix-darwin, via the flake.lock-pinned path (first
-#    activation — darwin-rebuild not on PATH yet). macOS system activation
-#    needs root: this first run asks for a password, then sudo becomes Touch ID.
-cd ~/.config/home-manager
-nix build .#darwinConfigurations.macos.system
-sudo ./result/sw/bin/darwin-rebuild switch --flake .#macos
+#    is ~12GB). Then nix-darwin via our pinned app (first activation —
+#    darwin-rebuild not on PATH yet). Evaluation/build run as your user; only
+#    the activation elevates — sudo asks for a password inside, then becomes
+#    Touch ID for every later `darwin-rebuild switch`.
+nix run ~/.config/home-manager#bootstrap-darwin
 
 # 7. Re-apply — espanso now exists, so its package install + service
 #    registration succeed.
@@ -101,7 +100,7 @@ The login shell is Apple's `/bin/zsh` (the macOS default — no `chsh` needed on
 | Bump flake inputs | — | `nix flake update` (in `dot_config/home-manager`; on a GitHub 403 prefix `NIX_CONFIG="access-tokens = github.com=$(gh auth token)"`) |
 | Format nix files | — | `nix fmt` (in `dot_config/home-manager`) |
 
-The `nix build … && ./result/activate` / `nix build … && sudo ./result/sw/bin/darwin-rebuild` dances are only the **first-run** ways to invoke home-manager / nix-darwin before they are on `PATH`. After the first switch, use `home-manager switch` / `darwin-rebuild switch` directly (the commands in the table).
+`nix run ~/.config/home-manager#bootstrap-home` / `…#bootstrap-darwin` (pinned apps defined in `flake.nix`) are only the **first-run** entry points before home-manager / darwin-rebuild are on `PATH`. After the first switch, use `home-manager switch` / `darwin-rebuild switch` directly (the commands in the table).
 
 ## Gotchas
 

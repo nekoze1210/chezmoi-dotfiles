@@ -14,7 +14,7 @@ Three layers, three jobs:
 
 Nix files (under `dot_config/home-manager/`):
 
-- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (incl. a `mise` `doCheck=false` fix). `homeUser` is the shared home-manager module. Also a `formatter` output (nixfmt) so `nix fmt` works here.
+- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (incl. a `mise` `doCheck=false` fix). `homeUser` is the shared home-manager module. Also `apps` (pinned `bootstrap-home`/`bootstrap-darwin` first-run runners — never `nix run home-manager/master` or `nix run nix-darwin`, which pull unpinned masters) and a `formatter` output (nixfmt) so `nix fmt` works here.
 - `common.nix` — the home-manager module: `home.packages` (CLI from nixpkgs) + shell stack (`programs.zsh`/starship/atuin/zoxide/carapace/sheldon/mise/direnv/fzf) + PATH/env/aliases.
 - `darwin.nix` — nix-darwin system module: boilerplate (`nix.enable=false` for Determinate) + the `homebrew` block.
 - `secrets.nix` — sops-nix declarations (see Secrets below).
@@ -61,12 +61,11 @@ nix flake check
 nix fmt              # nixfmt formatter output (run from ~/.config/home-manager)
 ```
 
-First-time nix-darwin bootstrap (before `darwin-rebuild` is on PATH):
+First-time activations (before `home-manager`/`darwin-rebuild` are on PATH) — pinned apps from this flake:
 
 ```
-cd ~/.config/home-manager
-nix build .#darwinConfigurations.macos.system
-sudo ./result/sw/bin/darwin-rebuild switch --flake .#macos
+nix run ~/.config/home-manager#bootstrap-home     # home-manager 初回（-b backup 内蔵）
+nix run ~/.config/home-manager#bootstrap-darwin   # darwin-rebuild 初回（sudo は内部で昇格）
 ```
 
 ## Secrets — two systems
