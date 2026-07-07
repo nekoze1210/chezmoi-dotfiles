@@ -28,7 +28,7 @@
 set -eu
 
 if ! command -v espanso >/dev/null 2>&1; then
-  echo "[chezmoi] espanso not installed yet (run 'sudo darwin-rebuild switch' first) — will retry next apply" >&2
+  echo "[chezmoi] espanso not installed yet — EXPECTED during first bootstrap; all files ARE deployed. Continue with the README steps ('sudo darwin-rebuild switch' installs espanso, then re-apply)" >&2
   exit 1
 fi
 
