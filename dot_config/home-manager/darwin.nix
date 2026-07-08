@@ -91,6 +91,7 @@
       "keyboardcleantool"
       "ngrok"
       "obsidian"
+      "orbstack"
       "raycast"
       "visual-studio-code"
     ];
