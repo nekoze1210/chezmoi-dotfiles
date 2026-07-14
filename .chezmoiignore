@@ -54,3 +54,9 @@ Library/Application Support/espanso/*.log
 
 # 注: ~/.config/home-manager/private.nix は private.nix.tmpl から chezmoi が
 # 生成する（identity 注入用）。生成ターゲットなので ignore しないこと。
+
+# Claude Code: hook スクリプトは herdr が install 時に生成・バージョン管理する
+# （home-manager activation の `herdr integration install claude`）。絶対パスを
+# herdr が解決するので chezmoi では実体を持たない。settings.json の SessionStart
+# エントリだけ dot_claude/settings.json.tmpl で管理（herdr 正規形に整列済み）。
+.claude/hooks/herdr-agent-state.sh

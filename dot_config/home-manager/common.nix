@@ -299,6 +299,17 @@
     };
   };
 
+  # herdr の Claude Code integration を herdr 自身に install させる。hook スクリプト
+  # （~/.claude/hooks/herdr-agent-state.sh）は herdr がバージョン管理するので chezmoi では
+  # 持たず（.chezmoiignore で除外）、settings.json の SessionStart エントリだけ committed。
+  # store パス直指定なので PATH 非依存、冪等（settings は正規形一致で no-op、スクリプトだけ更新）。
+  # ~/.claude 未作成時（fresh machine で chezmoi apply 前）は skip、失敗しても switch は止めない。
+  home.activation.herdrClaudeIntegration = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -d "$HOME/.claude" ]; then
+      $DRY_RUN_CMD "${config.programs.herdr.package}/bin/herdr" integration install claude || true
+    fi
+  '';
+
   # zsh プラグイン（autosuggestions / syntax-highlighting / ni）
   programs.sheldon = {
     enable = true;
