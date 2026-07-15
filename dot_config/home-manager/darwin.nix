@@ -131,6 +131,8 @@
       AppleShowAllExtensions = true;
       InitialKeyRepeat = 11; # 入力開始までの待ち（小さいほど速い）
       KeyRepeat = 1; # リピート速度（小さいほど速い）
+      "com.apple.trackpad.scaling" = 3.0; # ポインタ速度（0〜3, 大きいほど速い）
+      "com.apple.mouse.tapBehavior" = 1; # タップでクリック（1=有効）
     };
     finder = {
       AppleShowAllFiles = true;
@@ -141,18 +143,23 @@
       tilesize = 40;
       mineffect = "scale";
     };
-    trackpad.TrackpadThreeFingerDrag = true; # 3本指ドラッグ（内蔵トラックパッド）
+    trackpad = {
+      TrackpadThreeFingerDrag = true; # 3本指ドラッグ（内蔵トラックパッド）
+      Clicking = true; # タップでクリック（内蔵）
+    };
     menuExtraClock.ShowSeconds = true;
+
+    WindowManager.EnableStandardClickToShowDesktop = false;
 
     # 型付きオプションが無いもの / 外付け(Bluetooth)トラックパッドのドメインは
     # 生 defaults として書く（domain → key → value）。
     CustomUserPreferences = {
       NSGlobalDomain = {
-        "com.apple.trackpad.scaling" = 3.0; # トラックパッド速度を最大寄りに
         AppleEnableSwipeNavigateWithScrolls = true; # 2本指スワイプで戻る/進む
       };
       "com.apple.driver.AppleBluetoothMultitouch.trackpad" = {
         TrackpadThreeFingerDrag = true;
+        Clicking = true; # タップでクリック（外付け）
       };
     };
 
