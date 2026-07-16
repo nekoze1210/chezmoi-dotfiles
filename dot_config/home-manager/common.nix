@@ -32,6 +32,7 @@
     eza
     ripgrep
     fd
+    ast-grep
     dust
     tig
     tree
