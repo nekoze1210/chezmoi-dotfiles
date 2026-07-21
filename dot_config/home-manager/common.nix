@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   home.stateVersion = "26.05";
@@ -13,7 +18,6 @@
 
     # cloud / k8s / infra
     awscli2
-    aws-sam-cli
     azure-cli
     eksctl
     kubectl
@@ -39,7 +43,6 @@
     jq
     tokei
     yamllint
-    httpstat
     k6
 
     # media / misc
@@ -67,7 +70,7 @@
     BUN_INSTALL = "$HOME/.bun";
     # sops CLI 用（CLI 組み込みの SSH 対応は agessh 流儀で ssh-to-age recipient を開けない）
     SOPS_AGE_KEY_CMD = "ssh-to-age -private-key -i ${config.home.homeDirectory}/.ssh/id_ed25519";
-    HOMEBREW_FORBIDDEN_FORMULAE="node python python3 pip npm pnpm yarn claude";
+    HOMEBREW_FORBIDDEN_FORMULAE = "node python python3 pip npm pnpm yarn claude";
   };
 
   home.sessionPath = [
@@ -173,7 +176,10 @@
 
       # 層1 secret: sops-nix が復号した 0400 ファイルから export（値は nix store に焼かれない）
       ${lib.concatMapStringsSep "\n      " (
-        name: ''[[ -r "${config.sops.secrets.${name}.path}" ]] && export ${name}="$(<"${config.sops.secrets.${name}.path}")"''
+        name:
+        ''[[ -r "${config.sops.secrets.${name}.path}" ]] && export ${name}="$(<"${
+          config.sops.secrets.${name}.path
+        }")"''
       ) (builtins.attrNames config.sops.secrets)}
     '';
   };

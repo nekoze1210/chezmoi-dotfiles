@@ -15,8 +15,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # 一時 input: herdr 0.7.3 用（overlay 参照）。本体 bump 時に撤去
-    nixpkgs-herdr.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
   outputs =
@@ -26,7 +24,6 @@
       home-manager,
       nix-darwin,
       sops-nix,
-      nixpkgs-herdr,
       ...
     }:
     let
@@ -45,17 +42,7 @@
       # 評価・switch は chezmoi apply 済みの ~/.config/home-manager で行うこと。
       private = import ./private.nix;
 
-      sharedOverlays = [
-        (_: prev: {
-          mise = prev.mise.overrideAttrs (_: {
-            doCheck = false;
-          });
-          # herdr だけ新しい nixpkgs から取る（本体 pin の bump は Hydra の darwin
-          # キャッシュ不足 + Tahoe の cctools ld クラッシュで時期尚早。整い次第
-          # 本体を bump してこの input ごと撤去する）
-          herdr = nixpkgs-herdr.legacyPackages.${prev.stdenv.hostPlatform.system}.herdr;
-        })
-      ];
+      sharedOverlays = [ ];
 
       # home-manager 側の user モジュール（standalone と、③で足す nix-darwin module の
       homeUser =
@@ -128,6 +115,7 @@
       };
 
       # `nix fmt` 用フォーマッタ（nix ファイルはこのディレクトリ配下にしか無い）。
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
+      # 素の nixfmt は stdin 専用になったので treefmt ラッパーの nixfmt-tree を使う。
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
     };
 }

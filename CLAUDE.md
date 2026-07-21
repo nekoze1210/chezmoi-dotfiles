@@ -14,7 +14,7 @@ Three layers, three jobs:
 
 Nix files (under `dot_config/home-manager/`):
 
-- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (incl. a `mise` `doCheck=false` fix). `homeUser` is the shared home-manager module. Also `apps` (pinned `bootstrap-home`/`bootstrap-darwin` first-run runners — never `nix run home-manager/master` or `nix run nix-darwin`, which pull unpinned masters) and a `formatter` output (nixfmt) so `nix fmt` works here.
+- `flake.nix` — inputs (nixpkgs, home-manager, nix-darwin, sops-nix) + the `homeConfigurations`/`darwinConfigurations` outputs. Identity from `private` (the generated `private.nix`); shared overlays in `sharedOverlays` (currently empty — used for temporary package fixes). `homeUser` is the shared home-manager module. Also `apps` (pinned `bootstrap-home`/`bootstrap-darwin` first-run runners — never `nix run home-manager/master` or `nix run nix-darwin`, which pull unpinned masters) and a `formatter` output (nixfmt) so `nix fmt` works here.
 - `common.nix` — the home-manager module: `home.packages` (CLI from nixpkgs) + shell stack (`programs.zsh`/starship/atuin/zoxide/carapace/sheldon/mise/direnv/fzf) + PATH/env/aliases.
 - `darwin.nix` — nix-darwin system module: boilerplate (`nix.enable=false` for Determinate) + the `homebrew` block.
 - `secrets.nix` — sops-nix declarations (see Secrets below).
@@ -97,5 +97,5 @@ This repo uses **two independent age-based encryption systems**. Don't conflate 
 - **home-manager is standalone, not a nix-darwin module** (no `useUserPackages`), so home packages live in `~/.nix-profile/bin`; `common.nix` prepends that ahead of `/opt/homebrew/bin` so nix tools beat brew.
 - **The OS username can differ from the `$HOME` basename** (true on some machines) — never derive home from the username (`private.nix.tmpl` takes them from `.chezmoi.username` / `.chezmoi.homeDir` separately).
 - `homebrew.onActivation.cleanup = "none"` — nix-darwin won't uninstall brew/casks not listed. Switch to `"uninstall"` to prune migrated formulae.
-- Dropped from the Brewfile→nix migration (unused / not in nixpkgs / broken): `golang-migrate` (nixpkgs `migrate` is broken), `makeicns`, `ccusage`, `ki`. `mise` needs the `doCheck=false` overlay (a test fails on darwin).
+- Dropped from the Brewfile→nix migration (unused / not in nixpkgs / broken): `golang-migrate` (nixpkgs `migrate` is broken), `makeicns`, `ccusage`, `ki`. Dropped later (2026-07): `httpstat` (build broken on Python 3.14), `aws-sam-cli` (unused, no darwin cache).
 
