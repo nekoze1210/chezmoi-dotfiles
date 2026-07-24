@@ -29,12 +29,6 @@
   # （shell は home-manager の programs.zsh が ~/.zshrc を管理している）。
   programs.zsh.enable = false;
 
-  # nix-darwin の HTML/マニュアル生成は個人機に不要。加えて nixpkgs-unstable が
-  # nixos-render-docs の --toc-depth を廃止（→ --sidebar-depth）した際、nix-darwin
-  # 側が追随するまで darwin-manual-html.drv のビルドが壊れ、system closure 全体が
-  # 巻き添えで失敗する。マニュアルを切れば壊れた derivation ごと closure から外れる。
-  documentation.enable = false;
-
   # --------------------------------------------------------------------------
   # Homebrew bridge — casks / mas / taps を宣言的に管理する（③ の主目的）。
   # cleanup = "uninstall": この宣言(Brewfile)に無い brew/cask は uninstall される
